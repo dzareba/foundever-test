@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, ref } from "vue";
+import { Ref, ref, watch } from "vue";
 import { TCategoryItem } from "@/types/movies";
 
 const props = defineProps<{
@@ -15,12 +15,19 @@ const currentValue: Ref<string> = ref(
   props.value ? props.value.name : props.items[0].name
 );
 
+watch(
+  () => props.value,
+  (newValue) => {
+    currentValue.value = newValue ? newValue.name : props.items[0].name;
+  },
+  { immediate: true }
+);
+
 const isSelected = (name: string): boolean => {
   return name === currentValue.value;
 };
 
 const changeTab = (tab: TCategoryItem): void => {
-  currentValue.value = tab.name;
   emit("onChange", tab);
 };
 
