@@ -1,24 +1,46 @@
-import useRequest from './helpers/useRequest';
-import useResponse from './helpers/useResponse';
+import { ApiResponse, QueryType, RequestObject } from "@/types/request";
+import useRequest from "./helpers/useRequest";
+import useResponse from "./helpers/useResponse";
 
-export default (requestConstructor: any, requestValues: any = {}):
-    Promise<{ status: string; isSuccess: boolean; data: any; errors: object; } | any> | any => {
+export default (
+  requestConstructor: RequestObject,
+  requestValues: QueryType = {} as QueryType
+): Promise<ApiResponse> | any => {
+  let response;
+  let valuesKeys = Object.keys(requestValues);
+  let postRequestValues;
 
-    let response;
-    let valuesKeys:any = requestValues ? Object.keys(requestValues) : {};
+  const isValuesKeys =
+    valuesKeys.length &&
+    !valuesKeys.some((key: string) =>
+      ["path", "params", "query", "body"].includes(key)
+    );
 
-    // Shortcut for POST : If no 'params','query','body' keys in requestValues object, so it is 'body' object itself.
-    if (valuesKeys.length && !valuesKeys.some((key: any) => ['path', 'params', 'query', 'body'].includes(key))) {
-        const body = { ...requestValues };
-        requestValues = {};
-        requestValues.body = body;
-    }
+  // Shortcut for POST : If no 'params','query','body' keys in requestValues object, so it is 'body' object itself.
+  if (isValuesKeys) {
+    const body = { ...requestValues };
+    postRequestValues = {
+      body,
+    };
+  }
 
-    const request = useRequest(requestConstructor, requestValues);
-    console.log('►►►', request.method.toUpperCase(), request.path, requestConstructor, requestValues);
+  const reqVals = isValuesKeys ? postRequestValues : requestValues;
 
-    if (request)
-        response = useResponse({ method: request.method, path: request.path, exec: request.exec });
-    else throw new Error('Something went wront with your API request.');
-    return response;
+  const request = useRequest(requestConstructor, reqVals);
+  console.log(
+    "►►►",
+    request.method.toUpperCase(),
+    request.path,
+    requestConstructor,
+    reqVals
+  );
+
+  if (request)
+    response = useResponse({
+      method: request.method,
+      path: request.path,
+      exec: request.exec,
+    });
+  else throw new Error("Something went wront with your API request.");
+  return response;
 };
