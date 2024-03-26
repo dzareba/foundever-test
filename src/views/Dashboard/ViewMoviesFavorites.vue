@@ -7,7 +7,6 @@ const backgroundImage = ref("");
 const moviesStore = useMoviesStore();
 
 const moviesFavorites = computed(() => moviesStore.state.favorites);
-console.log(moviesFavorites.value);
 const updateBackgroundImage = (imagePath: string) => {
   backgroundImage.value = imagePath;
 };
