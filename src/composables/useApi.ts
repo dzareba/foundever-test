@@ -1,11 +1,11 @@
-import { ApiResponse, QueryType, RequestObject } from "@/types/request";
+import { HttpRequestResponse, QueryType, RequestObject } from "@/types/request";
 import useRequest from "./helpers/useRequest";
 import useResponse from "./helpers/useResponse";
 
 export default (
   requestConstructor: RequestObject,
   requestValues: QueryType = {} as QueryType
-): Promise<ApiResponse> | any => {
+): Promise<HttpRequestResponse> => {
   let response;
   let valuesKeys = Object.keys(requestValues);
   let postRequestValues;
@@ -25,6 +25,8 @@ export default (
   }
 
   const reqVals = isValuesKeys ? postRequestValues : requestValues;
+  console.log(requestConstructor);
+  console.log(reqVals);
 
   const request = useRequest(requestConstructor, reqVals);
   console.log(

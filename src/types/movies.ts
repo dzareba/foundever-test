@@ -19,3 +19,18 @@ export type TCategoryItem = {
   name: string;
   value: number[];
 };
+
+export type MovieApiResponse = {
+  isSuccess: boolean;
+  data: {
+    results: TMovieData[];
+    total_pages: number;
+  };
+  status?: number;
+  error?: string;
+};
+
+export type MovieCategory = {
+  name: string;
+  value: number[];
+};

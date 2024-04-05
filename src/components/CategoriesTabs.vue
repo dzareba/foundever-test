@@ -46,7 +46,7 @@ const changeSelector = (event: Event) => {
     <div
       class="flex flex-1 h-full max-w-screen-xl align-center bg-blue mx-auto items-center"
     >
-      <div class="flex-1 flex-row hidden md:flex">
+      <div class="flex-1 flex-row hidden md:flex center">
         <div
           v-for="(item, index) of items"
           :key="'cat' + index"
@@ -74,4 +74,8 @@ const changeSelector = (event: Event) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.center {
+  justify-content: center;
+}
+</style>

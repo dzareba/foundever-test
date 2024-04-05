@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, computed } from "vue";
 import { TMovieData } from "@/types/movies";
-import useMoviesStore from "@/stores/movies";
+import useFavoriteMoviesStore from "@/stores/favoriteMovies";
 
-const movies = useMoviesStore();
+const favoriteMovies = useFavoriteMoviesStore();
 
 const emit = defineEmits<{
   (e: "onHover", pictureURL: string): void;
@@ -14,7 +14,7 @@ const props = defineProps<{
 }>();
 
 const isFavorite = computed(() => {
-  return !!movies.state.favorites.find(
+  return !!favoriteMovies.state.favorites.find(
     (e: TMovieData) => e.id === props.data.id
   );
 });
@@ -33,8 +33,8 @@ const getLinkImage = (picturePath: string, originalSize: boolean = false) => {
 };
 
 const toggleFavorite = () => {
-  if (isFavorite.value) movies.methods.removeFavorite(props.data);
-  else movies.methods.addFavorite(props.data);
+  if (isFavorite.value) favoriteMovies.methods.removeFavorite(props.data);
+  else favoriteMovies.methods.addFavorite(props.data);
 };
 
 onMounted(() => {
