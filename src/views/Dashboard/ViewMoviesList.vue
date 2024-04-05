@@ -9,12 +9,13 @@ import {
 } from "vue";
 // import { useInfiniteScroll } from "@vueuse/core";
 import { CategoriesTabs, MovieCard } from "@/app.organizer";
-import { TCategoryItem } from "@/types/movies";
+import { MovieCategory, TCategoryItem, TMovieData } from "@/types/movies";
 import { ROUTE_DASHBOARD_MOVIES_LIST } from "@/app.routes";
-import useMoviesStore from "@/stores/movies";
+import useFavoriteMoviesStore from "@/stores/favoriteMovies";
 import { useRouter, useRoute } from "vue-router";
+import useGenresStore from "@/stores/genres";
 
-const movies = useMoviesStore();
+const genres = useGenresStore();
 
 export default defineComponent({
   components: {
@@ -24,7 +25,7 @@ export default defineComponent({
   setup() {
     let currentTab = ref({} as TCategoryItem);
     const isLoadingNextPage = ref(false);
-    const categories = reactive([
+    const categories: MovieCategory[] = reactive([
       {
         name: "All",
         value: [28, 16, 12, 35, 99],
@@ -53,23 +54,25 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
 
-    const storeMovies = computed(() => useMoviesStore());
-    const currentPage = computed(() => movies.state.currentPage);
-    const moviesGenres = computed(() => movies.state.moviesGenres);
-    const end = computed(() => movies.state.end);
+    const favoriteMoviesStore = computed(() => useFavoriteMoviesStore());
+    const currentPage = computed(() => genres.state.currentPage);
+    const moviesGenres = computed(
+      () => genres.state.moviesGenres as TMovieData[]
+    );
+    const end = computed(() => genres.state.end);
 
     const getGenres = (genre: number[], page: number = 1) =>
-      movies.methods.getGenres(genre, page);
+      genres.methods.getGenres(genre, page);
 
     const getCategory = (name: string) =>
-      categories.find((e: any) => e.name === name);
+      categories.find((e: MovieCategory) => e.name === name);
 
     const onChangeTab = (tab: TCategoryItem): void => {
       currentTab.value = tab;
     };
 
-    const handleScroll = async (event: any) => {
-      const { target } = event;
+    const handleScroll = async (event: Event) => {
+      const target = event.target as HTMLElement;
       if (
         target.scrollTop + target.clientHeight >=
         target.scrollHeight - 400 * currentPage.value
@@ -109,7 +112,7 @@ export default defineComponent({
       currentTab,
       isLoadingNextPage,
       categories,
-      storeMovies,
+      favoriteMoviesStore,
       currentPage,
       moviesGenres,
       end,
@@ -136,9 +139,9 @@ export default defineComponent({
     >
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <MovieCard
-          v-for="(movie, index) in moviesGenres"
+          v-for="(genre, index) in moviesGenres"
           :key="'m-' + index"
-          :data="movie"
+          :data="genre"
         />
       </div>
     </div>

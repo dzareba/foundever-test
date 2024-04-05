@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
+import { TMovieData } from "./movies";
 
 export type QueryParam = {
   required: boolean;
@@ -11,7 +12,7 @@ export type RequestQuery = {
 
 export type RequestObject = {
   api: typeof axios;
-  method: "GET" | "POST" | "PUT" | "DELETE";
+  method: METHOD;
   path: string;
   query: RequestQuery;
 };
@@ -26,6 +27,12 @@ export type QueryType = {
 export type ApiResponse = {
   status: string;
   isSuccess: boolean;
+  data: TMovieData[];
+};
+
+export type ApiError = {
+  status: string;
+  isSuccess: boolean;
 };
 
 export type ResponseParams = {
@@ -36,6 +43,48 @@ export type ResponseParams = {
 
 export type HttpRequestResponse = {
   status?: number;
-  data?: any;
-  errors?: any;
+  data?: TMovieData[];
+  errors?: string;
+  isSuccess: boolean;
 };
+
+export type ApiConfig = {
+  api: typeof axios;
+  method: METHOD;
+  path: string;
+  params?: Record<string, ParamConfig>;
+  query?: Record<string, any>;
+  body?: any;
+  config?: AxiosRequestConfig;
+};
+
+export type RequestOverrides = {
+  api?: typeof axios;
+  path?: string | null;
+  params?: Record<string, ParamConfig>;
+  query?: Record<string, any>;
+  body?: Record<string, any>;
+  config?: AxiosRequestConfig;
+};
+
+export type RequestBuilderReturn = {
+  method: METHOD;
+  path: string;
+  body: string;
+  exec: () => Promise<any>;
+};
+
+export type ParamConfig = {
+  required?: boolean;
+  default?: any;
+  format: (value: any) => any;
+  validators: Array<(value: any) => boolean>;
+};
+
+export enum METHOD {
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  DELETE = "delete",
+  PATCH = "patch",
+}

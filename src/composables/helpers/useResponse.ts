@@ -1,11 +1,11 @@
-import { ApiResponse, ResponseParams } from "@/types/request";
+import { HttpRequestResponse, ResponseParams } from "@/types/request";
 
 export default async function useResponse({
   method,
   path,
   exec,
-}: ResponseParams): Promise<() => Promise<ApiResponse>> {
-  let response: any = {};
+}: ResponseParams): Promise<HttpRequestResponse> {
+  let response: HttpRequestResponse = {} as HttpRequestResponse;
 
   if (typeof exec === "function") {
     return exec()
@@ -38,11 +38,9 @@ export default async function useResponse({
       });
   } else {
     console.error("Request function is not a function");
-    return async () => {
-      return {
-        status: "???",
-        isSuccess: false,
-      };
+    return {
+      status: undefined,
+      isSuccess: false,
     };
   }
 }
